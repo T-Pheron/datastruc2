@@ -7,6 +7,10 @@ public class AVLTree extends BinarySearchTree {
 
         Branch left, right;
 
+        private Branch() {
+            super();
+        }
+
         private Branch(int enter) {
             super(enter);
         }
@@ -53,6 +57,11 @@ public class AVLTree extends BinarySearchTree {
     public AVLTree(int enter) {
         super();
         root = new Branch(enter);
+    }
+
+    public AVLTree() {
+        super();
+        root = new Branch();
     }
 
     private int height(Branch node) {
