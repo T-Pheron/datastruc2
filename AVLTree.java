@@ -15,12 +15,24 @@ public class AVLTree extends BinarySearchTree {
             super(enter);
         }
 
+        private Branch(int enter, Object data) {
+            super(enter, data);
+        }
+
         private Branch(int enter, int floor) {
             super(enter, floor);
         }
 
+        private Branch(int enter, Object data, int floor) {
+            super(enter, data, floor);
+        }
+
         int getNumber() {
             return number;
+        }
+
+        Object getData() {
+            return data;
         }
 
         int getFloor() {
@@ -41,6 +53,10 @@ public class AVLTree extends BinarySearchTree {
 
         void replaceNumber(int replace) {
             number = replace;
+        }
+
+        void replaceData(Object replace) {
+            this.data = replace;
         }
 
         void replaceRight(Branch replace) {
@@ -90,15 +106,21 @@ public class AVLTree extends BinarySearchTree {
 
     private Branch rotateRight(Branch node) {
         Branch leftChild = node.getLeft();
-        if (node.getLeft() != null)
+        if (node.getLeft() != null) {
             leftChild.floor = node.getLeft().floor;
+            leftChild.data = node.getLeft().data;
+        }
 
         node.replaceLeft(leftChild.getRight());
-        if (leftChild.getRight() != null)
+        if (leftChild.getRight() != null) {
             node.getLeft().floor = leftChild.getRight().floor;
+            node.getLeft().data = leftChild.getRight().data;
+        }
         leftChild.replaceRight(node);
-        if (node != null)
+        if (node != null) {
             leftChild.getRight().floor = node.getFloor();
+            leftChild.getRight().data = node.getData();
+        }
 
         updateHeight(node);
         updateHeight(leftChild);
@@ -108,15 +130,21 @@ public class AVLTree extends BinarySearchTree {
 
     private Branch rotateLeft(Branch node) {
         Branch rightChild = node.getRight();
-        if (node.getRight() != null)
+        if (node.getRight() != null) {
             rightChild.floor = node.getRight().floor;
+            rightChild.data = node.getRight().data;
+        }
 
         node.replaceRight(rightChild.getLeft());
-        if (rightChild.getLeft() != null)
+        if (rightChild.getLeft() != null) {
             node.getRight().floor = rightChild.getLeft().floor;
+            node.getRight().data = rightChild.getLeft().data;
+        }
         rightChild.replaceLeft(node);
-        if (node != null)
+        if (node != null) {
             rightChild.getLeft().floor = node.getFloor();
+            rightChild.getLeft().data = node.getData();
+        }
 
         updateHeight(node);
         updateHeight(rightChild);
@@ -153,6 +181,11 @@ public class AVLTree extends BinarySearchTree {
         root = insertInBranch(root, enter, root.floor);
     }
 
+    @Override
+    void insertValue(int enter, Object data) {
+        root = insertInBranch(root, enter, data, root.floor);
+    }
+
     Branch insertInBranch(Branch root, int enter, int floor) {
 
         if (root == null) {
@@ -164,6 +197,23 @@ public class AVLTree extends BinarySearchTree {
             root.replaceLeft(insertInBranch(root.left, enter, root.floor));
         } else if (enter > root.getNumber()) {
             root.replaceRight(insertInBranch(root.right, enter, root.floor));
+        }
+
+        updateHeight(root);
+        return rebalance(root);
+    }
+
+    Branch insertInBranch(Branch root, int enter, Object data, int floor) {
+
+        if (root == null) {
+            root = new Branch(enter, data, floor + 1);
+            updateHeight(root);
+            return rebalance(root);
+        }
+        if (enter < root.getNumber()) {
+            root.replaceLeft(insertInBranch(root.left, enter, data, root.floor));
+        } else if (enter > root.getNumber()) {
+            root.replaceRight(insertInBranch(root.right, enter, data, root.floor));
         }
 
         updateHeight(root);
@@ -197,6 +247,49 @@ public class AVLTree extends BinarySearchTree {
 
     boolean searchValue(Branch node, int enter) {
         return super.searchValue(node, enter);
+    }
+
+    void updateData(int number, Object data) {
+        updateData(root, number, data);
+    }
+
+    void updateData(Branch node, int number, Object data) {
+        boolean turnWhile = true;
+        while (turnWhile != false) {
+            if (node.getNumber() != number) {
+                if (number < node.getNumber() && node.getLeft() != null)
+                    node = node.getLeft();
+                else if (number > node.getNumber() && node.getRight() != null)
+                    node = node.getRight();
+                else
+                    turnWhile = false;
+            } else {
+                node.replaceData(data);
+                turnWhile = false;
+            }
+
+        }
+    }
+
+    Object getData(int enter) {
+        return getData(root, enter);
+    }
+
+    Object getData(Branch node, int enter) {
+        boolean turnWhile = true;
+        while (turnWhile != false) {
+            if (node.getNumber() != enter) {
+                if (enter < node.getNumber() && node.getLeft() != null)
+                    node = node.getLeft();
+                else if (enter > node.getNumber() && node.getRight() != null)
+                    node = node.getRight();
+                else
+                    turnWhile = false;
+            } else {
+                return node.getData();
+            }
+        }
+        return null;
     }
 
     public static void main(String[] args) {

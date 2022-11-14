@@ -4,6 +4,7 @@ public class BinarySearchTree {
 
     public class Branch {
         int number;
+        Object data;
         int floor;
 
         Branch left, right;
@@ -15,9 +16,28 @@ public class BinarySearchTree {
             right = null;
         }
 
+        public Branch(int enter, Object data) {
+            number = enter;
+            this.data = data;
+            floor = 0;
+            left = null;
+            right = null;
+        }
+
+        public Branch() {
+        }
+
         public Branch(int enter, int floor) {
             number = enter;
             this.floor = floor;
+            left = null;
+            right = null;
+        }
+
+        public Branch(int enter, Object data, int floor) {
+            number = enter;
+            this.floor = floor;
+            this.data = data;
             left = null;
             right = null;
         }
@@ -30,6 +50,10 @@ public class BinarySearchTree {
             return floor;
         }
 
+        Object getData() {
+            return data;
+        }
+
         Branch getRight() {
             return right;
         }
@@ -40,6 +64,10 @@ public class BinarySearchTree {
 
         void replaceNumber(int replace) {
             number = replace;
+        }
+
+        void replaceData(Object replace) {
+            this.data = replace;
         }
 
         void replaceRight(Branch replace) {
@@ -60,8 +88,16 @@ public class BinarySearchTree {
         root = new Branch(enter);
     }
 
+    BinarySearchTree(int enter, Object data) {
+        root = new Branch(enter, data);
+    }
+
     void insertValue(int enter) {
         root = insertInBranch(root, enter, root.floor);
+    }
+
+    void insertValue(int enter, Object data) {
+        root = insertInBranch(root, enter, data, root.floor);
     }
 
     Branch insertInBranch(Branch root, int enter, int floor) {
@@ -73,6 +109,20 @@ public class BinarySearchTree {
             root.left = insertInBranch(root.left, enter, root.floor);
         } else if (enter > root.number) {
             root.right = insertInBranch(root.right, enter, root.floor);
+        }
+
+        return root;
+    }
+
+    Branch insertInBranch(Branch root, int enter, Object data, int floor) {
+        if (root == null) {
+            root = new Branch(enter, data, floor + 1);
+            return root;
+        }
+        if (enter < root.number) {
+            root.left = insertInBranch(root.left, enter, data, root.floor);
+        } else if (enter > root.number) {
+            root.right = insertInBranch(root.right, enter, data, root.floor);
         }
 
         return root;
@@ -148,6 +198,7 @@ public class BinarySearchTree {
 
         else if (node.getLeft() == null && node.getRight() == null) {
             node = null;
+            return node;
         }
 
         else if (node.getLeft() == null) {
@@ -200,6 +251,23 @@ public class BinarySearchTree {
             }
         }
         return find;
+    }
+
+    Object getData(Branch node, int enter) {
+        boolean turnWhile = true;
+        while (turnWhile != false) {
+            if (node.getNumber() != enter) {
+                if (enter < node.getNumber() && node.getLeft() != null)
+                    node = node.getLeft();
+                else if (enter > node.getNumber() && node.getRight() != null)
+                    node = node.getRight();
+                else
+                    turnWhile = false;
+            } else {
+                return node.getData();
+            }
+        }
+        return null;
     }
 
     public static void main(String[] args) {
