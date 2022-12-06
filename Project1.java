@@ -51,13 +51,13 @@ public class Project1 {
     }
 
     // Function used to create a patient
-    void createPatient() {
+    void createPatient(int socialEnter) {
         String name;
         String surname;
         int jjBorn;
         int mmBorn;
         int aaaaBorn;
-        int social;
+        int social = socialEnter;
 
         System.out.println("Please enter the name of patient");
         name = keybordProject.next();
@@ -92,11 +92,13 @@ public class Project1 {
             aaaaBorn = keybordProject.nextInt();
         }
 
-        System.out.println("Please enter the social number of patient");
-        social = keybordProject.nextInt();
-        while (social < 1) {
-            System.out.println("Error - try again\n Social number :");
+        if (social == 0) {
+            System.out.println("Please enter the social number of patient");
             social = keybordProject.nextInt();
+            while (social < 1) {
+                System.out.println("Error - try again\n Social number :");
+                social = keybordProject.nextInt();
+            }
         }
 
         int[] born = new int[3];
@@ -219,7 +221,8 @@ public class Project1 {
                 if (respond.equals("No") || respond.equals("no")) {
                     respond = "try";
                 } else {
-                    createPatient();
+                    createPatient(socialNumberPatient);
+                    addTestToPatient(socialNumberPatient, reference);
                 }
             }
         } while (respond == "try");
@@ -324,7 +327,9 @@ public class Project1 {
         else {
             PCR pcr = (Project1.PCR) arrayPCR.getData(reference);
             deleteTestInPatient(pcr.socialNumberPatient, reference);
+            arrayPCR.viewTree();
             arrayPCR.deleteValue(reference);
+            arrayPCR.viewTree();
             System.out.println("Test delete !" + "\n\n\n\n");
         }
 
@@ -450,7 +455,7 @@ public class Project1 {
                     project1.viewAllPCRofPatient();
                     break;
                 case 4:
-                    project1.createPatient();
+                    project1.createPatient(0);
                     break;
                 case 5:
                     project1.deleteTest();

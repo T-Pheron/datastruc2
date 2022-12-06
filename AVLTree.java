@@ -2,82 +2,16 @@ import java.util.Random;
 
 public class AVLTree extends BinarySearchTree {
 
-    public class Branch extends BinarySearchTree.Branch {
-        int height;
-
-        Branch left, right;
-
-        private Branch() {
-            super();
-        }
-
-        private Branch(int enter) {
-            super(enter);
-        }
-
-        private Branch(int enter, Object data) {
-            super(enter, data);
-        }
-
-        private Branch(int enter, int floor) {
-            super(enter, floor);
-        }
-
-        private Branch(int enter, Object data, int floor) {
-            super(enter, data, floor);
-        }
-
-        int getNumber() {
-            return number;
-        }
-
-        Object getData() {
-            return data;
-        }
-
-        int getFloor() {
-            return floor;
-        }
-
-        int getHeight() {
-            return height;
-        }
-
-        Branch getRight() {
-            return right;
-        }
-
-        Branch getLeft() {
-            return left;
-        }
-
-        void replaceNumber(int replace) {
-            number = replace;
-        }
-
-        void replaceData(Object replace) {
-            this.data = replace;
-        }
-
-        void replaceRight(Branch replace) {
-            right = replace;
-        }
-
-        void replaceLeft(Branch replace) {
-            left = replace;
-        }
-    }
-
-    Branch root;
-
-    public AVLTree(int enter) {
-        super();
-        root = new Branch(enter);
-    }
-
     public AVLTree() {
         super();
-        root = new Branch();
+    }
+
+    public AVLTree(int enter) {
+        super(enter);
+    }
+
+    public AVLTree(int enter, Object data) {
+        super(enter, data);
     }
 
     private int height(Branch node) {
@@ -177,54 +111,20 @@ public class AVLTree extends BinarySearchTree {
     }
 
     @Override
-    void insertValue(int enter) {
-        root = insertInBranch(root, enter, root.floor);
-    }
-
-    @Override
-    void insertValue(int enter, Object data) {
-        root = insertInBranch(root, enter, data, root.floor);
-    }
-
     Branch insertInBranch(Branch root, int enter, int floor) {
-
-        if (root == null) {
-            root = new Branch(enter, floor + 1);
-            updateHeight(root);
-            return rebalance(root);
-        }
-        if (enter < root.getNumber()) {
-            root.replaceLeft(insertInBranch(root.left, enter, root.floor));
-        } else if (enter > root.getNumber()) {
-            root.replaceRight(insertInBranch(root.right, enter, root.floor));
-        }
-
-        updateHeight(root);
-        return rebalance(root);
-    }
-
-    Branch insertInBranch(Branch root, int enter, Object data, int floor) {
-
-        if (root == null) {
-            root = new Branch(enter, data, floor + 1);
-            updateHeight(root);
-            return rebalance(root);
-        }
-        if (enter < root.getNumber()) {
-            root.replaceLeft(insertInBranch(root.left, enter, data, root.floor));
-        } else if (enter > root.getNumber()) {
-            root.replaceRight(insertInBranch(root.right, enter, data, root.floor));
-        }
-
+        root = super.insertInBranch(root, enter, floor);
         updateHeight(root);
         return rebalance(root);
     }
 
     @Override
-    void deleteValue(int enter) {
-        root = deleteValue(enter, root);
+    Branch insertInBranch(Branch root, int enter, Object data, int floor) {
+        root = super.insertInBranch(root, enter, data, floor);
+        updateHeight(root);
+        return rebalance(root);
     }
 
+    @Override
     Branch deleteValue(int enter, Branch node) {
         super.deleteValue(enter, node);
         updateHeight(node);
@@ -232,64 +132,12 @@ public class AVLTree extends BinarySearchTree {
     }
 
     @Override
-    void viewTree() {
-        viewBranch(root);
-    }
-
-    void viewBranch(Branch root) {
-        super.viewBranch(root);
-    }
-
-    @Override
-    boolean searchValue(int enter) {
-        return searchValue(root, enter);
-    }
-
-    boolean searchValue(Branch node, int enter) {
-        return super.searchValue(node, enter);
-    }
-
-    void updateData(int number, Object data) {
-        updateData(root, number, data);
-    }
-
     void updateData(Branch node, int number, Object data) {
-        boolean turnWhile = true;
-        while (turnWhile != false) {
-            if (node.getNumber() != number) {
-                if (number < node.getNumber() && node.getLeft() != null)
-                    node = node.getLeft();
-                else if (number > node.getNumber() && node.getRight() != null)
-                    node = node.getRight();
-                else
-                    turnWhile = false;
-            } else {
-                node.replaceData(data);
-                turnWhile = false;
-            }
-
+        super.updateData(node, number, data);
+        if (node != null) {
+            updateHeight(node);
+            rebalance(node);
         }
-    }
-
-    Object getData(int enter) {
-        return getData(root, enter);
-    }
-
-    Object getData(Branch node, int enter) {
-        boolean turnWhile = true;
-        while (turnWhile != false) {
-            if (node.getNumber() != enter) {
-                if (enter < node.getNumber() && node.getLeft() != null)
-                    node = node.getLeft();
-                else if (enter > node.getNumber() && node.getRight() != null)
-                    node = node.getRight();
-                else
-                    turnWhile = false;
-            } else {
-                return node.getData();
-            }
-        }
-        return null;
     }
 
     public static void main(String[] args) {

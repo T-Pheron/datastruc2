@@ -2,86 +2,10 @@ import java.util.Random;
 
 public class BinarySearchTree {
 
-    public class Branch {
-        int number;
-        Object data;
-        int floor;
-
-        Branch left, right;
-
-        public Branch(int enter) {
-            number = enter;
-            floor = 0;
-            left = null;
-            right = null;
-        }
-
-        public Branch(int enter, Object data) {
-            number = enter;
-            this.data = data;
-            floor = 0;
-            left = null;
-            right = null;
-        }
-
-        public Branch() {
-        }
-
-        public Branch(int enter, int floor) {
-            number = enter;
-            this.floor = floor;
-            left = null;
-            right = null;
-        }
-
-        public Branch(int enter, Object data, int floor) {
-            number = enter;
-            this.floor = floor;
-            this.data = data;
-            left = null;
-            right = null;
-        }
-
-        int getNumber() {
-            return number;
-        }
-
-        int getFloor() {
-            return floor;
-        }
-
-        Object getData() {
-            return data;
-        }
-
-        Branch getRight() {
-            return right;
-        }
-
-        Branch getLeft() {
-            return left;
-        }
-
-        void replaceNumber(int replace) {
-            number = replace;
-        }
-
-        void replaceData(Object replace) {
-            this.data = replace;
-        }
-
-        void replaceRight(Branch replace) {
-            right = replace;
-        }
-
-        void replaceLeft(Branch replace) {
-            left = replace;
-        }
-    }
-
     Branch root;
 
     BinarySearchTree() {
+        root = new Branch();
     }
 
     BinarySearchTree(int enter) {
@@ -144,7 +68,7 @@ public class BinarySearchTree {
         if (root.getRight() != null)
             viewBranchRight(view, root.getRight(), 55);
 
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < 10; i++) {
             for (int y = 0; y < 100; y++) {
                 if (view[i][y] != null)
                     System.out.print(view[i][y]);
@@ -187,29 +111,35 @@ public class BinarySearchTree {
 
     Branch deleteValue(int enter, Branch node) {
         if (node == null) {
+            System.out.println("Delete 1");
             return null;
         }
-
         if (enter < node.getNumber()) {
-            node.replaceLeft(deleteValue(enter, node.getLeft()));
+            System.out.println("Delete 3");
+            Branch nodeDefault = node.getRight();
+            if (nodeDefault.getLeft() == null && nodeDefault.getRight() == null) {
+                node.replaceLeft(null);
+            } else
+                node.replaceLeft(deleteValue(enter, node.getLeft()));
         } else if (enter > node.getNumber()) {
-            node.replaceRight(deleteValue(enter, node.getRight()));
-        }
-
-        else if (node.getLeft() == null && node.getRight() == null) {
-            node = null;
-            return node;
-        }
-
-        else if (node.getLeft() == null) {
+            System.out.println("Delete 4");
+            Branch nodeDefault = node.getLeft();
+            if (nodeDefault.getLeft() == null && nodeDefault.getRight() == null) {
+                node.replaceRight(null);
+            } else
+                node.replaceRight(deleteValue(enter, node.getRight()));
+        } else if (node.getLeft() == null) {
+            System.out.println("Delete 5");
             node = node.getRight();
         } else if (node.getRight() == null) {
+            System.out.println("Delete 6");
             node = node.getLeft();
-        }
-
-        else {
+        } else {
+            System.out.println("Delete 7");
             deleteValueWithTwoChildren(node);
         }
+
+        System.out.println("Delete 8");
 
         return node;
     }
@@ -228,6 +158,28 @@ public class BinarySearchTree {
             node = node.getLeft();
         }
         return node;
+    }
+
+    void updateData(int number, Object data) {
+        updateData(root, number, data);
+    }
+
+    void updateData(Branch node, int number, Object data) {
+        boolean turnWhile = true;
+        while (turnWhile != false) {
+            if (node.getNumber() != number) {
+                if (number < node.getNumber() && node.getLeft() != null)
+                    node = node.getLeft();
+                else if (number > node.getNumber() && node.getRight() != null)
+                    node = node.getRight();
+                else
+                    turnWhile = false;
+            } else {
+                node.replaceData(data);
+                turnWhile = false;
+            }
+
+        }
     }
 
     boolean searchValue(int enter) {
@@ -253,6 +205,10 @@ public class BinarySearchTree {
         return find;
     }
 
+    Object getData(int enter) {
+        return getData(root, enter);
+    }
+
     Object getData(Branch node, int enter) {
         boolean turnWhile = true;
         while (turnWhile != false) {
@@ -273,7 +229,7 @@ public class BinarySearchTree {
     public static void main(String[] args) {
         BinarySearchTree tree = new BinarySearchTree(12);
         try (java.util.Scanner keybord = new java.util.Scanner(System.in)) {
-            for (int i = 0; i < 100; i++) {
+            for (int i = 0; i < 5; i++) {
                 Random rand = new Random();
                 int randNumber = rand.nextInt(1000);
                 tree.insertValue(randNumber);
@@ -299,8 +255,8 @@ public class BinarySearchTree {
 
             System.out.println("Give me a number for add");
             String number3 = keybord.next();
-
             tree.deleteValue(Integer.parseInt(number3));
+
         } catch (NumberFormatException e) {
             e.printStackTrace();
         }
